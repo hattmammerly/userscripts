@@ -7,9 +7,12 @@ it's just a hack. I'm not responsible if anything goes wrong.
 todo:
 -
 -   reorganize the code and see if I can make it less choppy
--   find a good way to differentiate between search view and all view
--   find a good way to determine if I'm dealing with friends, groups, group members, or liked pages
--   implement the previous two
+-   put checkboxes on the "likes" page and the "groups" page
+-   troubleshoot executing the removal scripts since those are guesses
+
+note: giving up on mass expulsion of group members. I had the button in place but then I broke it somehow and now it won't come back. I don't need it, anyway.
+anyway, the script responsible for that is /ajax/groups/members/remove.php and seems to want the data _group_id_ and _uid_
+maybe I'll make that into its own script sometime later.
 
 backstory:
 -

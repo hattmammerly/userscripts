@@ -20,13 +20,15 @@ function popup(rem) {
 set_timer();
 
 var page = "";
+var profileid;
+var groupid;
 if ($("#pagelet_friends").length > 0) {
     $('.uiToolbarContent .rfloat').prepend("<div id=\"delete_buttons\" style=\"float:right;margin-left:5px;\"></label><label for=\"Ihavenofriends\" class=\"_11b uiButton uiToolbarButton\"><input type=\"submit\" id=\"mass_deleter\" value=\"Delete Selected Friends\"></label></div>");
     $('.stickyHeaderWrap .back').css('height', '60px');
     $('.fbTimelineSection.mtm').css('margin-top', '10px');
     page = "friends";
 } else if ($("#pagelet_like_stream").length > 0) {
-    $('.clearfix .uiHeaderTop').prepend("<div id=\"delete_buttons\" style=\"float:right;margin-left:5px;\"></label><label for=\"Ihavenofriends\" class=\"_11b uiButton uiToolbarButton\"><input type=\"submit\" id=\"mass_deleter\" value=\"Delete Selected Pages\"></label></div>");
+    $('.clearfix .uiHeaderTop').prepend("<div id=\"delete_buttons\" style=\"float:right;margin-left:5px;\"></label><label for=\"Ihavenofriends\" class=\"profileEditButton uiButton uiButtonOverlay\"><input type=\"submit\" id=\"mass_deleter\" value=\"Delete Selected Pages\"></label></div>");
     $('.stickyHeaderWrap .back').css('height', '60px');
     $('.fbTimelineSection.mtm').css('margin-top', '10px');
     page = "likes";
@@ -34,13 +36,7 @@ if ($("#pagelet_friends").length > 0) {
     $(".clearfix .uiHeaderTop").prepend("<div id=\"delete_buttons\" style=\"float:right;margin-left:5px;\"></label><label for=\"Ihavenofriends\" class=\"_11b uiButton uiToolbarButton\"><input type=\"submit\" id=\"mass_deleter\" value=\"Leave Selected Groups\"></label></div>");
     $('.stickyHeaderWrap .back').css('height', '60px');
     $('.fbTimelineSection.mtm').css('margin-top', '10px');
-    page = "groupslist"; 
-
-} else if ($("#pagelet_group_members").length > 0) {
-    $('.uiList .rfloat').prepend("<div id=\"delete_buttons\" style=\"float:right;margin-left:5px;\"></label><label for=\"Ihavenofriends\" class=\"_11b uiButton uiToolbarButton\"><input type=\"submit\" id=\"mass_deleter\" value=\"Expel Selected Members\"></label></div>");
-    $('.stickyHeaderWrap .back').css('height', '60px');
-    $('.fbTimelineSection.mtm').css('margin-top', '10px');
-    page = "groupsmem";
+    page = "groupslist";
 }
 
 $("#mass_deleter").live("click", function() { //redo function when I get checkboxes everywhere else
@@ -55,8 +51,6 @@ $("#mass_deleter").live("click", function() { //redo function when I get checkbo
             a.innerHTML = "new AsyncRequest().setURI('/ajax/pages/fan_status.php').setData({ fbpage_id: " + profileid + ",add:false,norefresh:true }).send();"; //figure out what parameters this script needs and how to get them
         } else if (pages === "groupslist") {
             a.innerHTML = "new AsyncRequest().setURI('/ajax/groups/membership/leave.php').setData({ group_id: " + profileid + ",norefresh:true }).send();"; 
-        } else if (pages === "groupsmem") {
-            a.innerHTML = "new AsyncRequest().setURI('/ajax/groups/members/remove.php').setData({ group_id: " + groupid + ",uid: " + profileid + ",norefresh:true }).send();"; //may not work. get both groupid and profileid
         }
         document.body.appendChild(a);
     });
