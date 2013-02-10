@@ -4,8 +4,9 @@
 // @namespace http://hattmammerly.com/codez/
 // @include *.facebook.com/*
 // @require http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js
-// @version .1
+// @version .2
 // ==/UserScript==
+// based on http://userscripts.org/scripts/show/150411
 
 function sleep(rem){ //rem for removed entries
     setInterval(function() {
@@ -17,13 +18,46 @@ function popup(rem) {
     $('div.dialog_body').html(rem + ' removed.');
 }
 set_timer();
-$("#mass_deleter").live("click", function() {
+
+var page = "";
+if ($("#pagelet_friends").length > 0) {
+    $('.uiToolbarContent .rfloat').prepend("<div id=\"delete_buttons\" style=\"float:right;margin-left:5px;\"></label><label for=\"Ihavenofriends\" class=\"_11b uiButton uiToolbarButton\"><input type=\"submit\" id=\"mass_deleter\" value=\"Delete Selected Friends\"></label></div>");
+    $('.stickyHeaderWrap .back').css('height', '60px');
+    $('.fbTimelineSection.mtm').css('margin-top', '10px');
+    page = "friends";
+} else if ($("#pagelet_like_stream").length > 0) {
+    $('.clearfix .uiHeaderTop').prepend("<div id=\"delete_buttons\" style=\"float:right;margin-left:5px;\"></label><label for=\"Ihavenofriends\" class=\"_11b uiButton uiToolbarButton\"><input type=\"submit\" id=\"mass_deleter\" value=\"Delete Selected Pages\"></label></div>");
+    $('.stickyHeaderWrap .back').css('height', '60px');
+    $('.fbTimelineSection.mtm').css('margin-top', '10px');
+    page = "likes";
+} else if ($(location).attr("href") === "https://www.facebook.com/bookmarks/groups" || $(location).attr("href") === "http://www.facebook.com/bookmarks/groups") {
+    $(".clearfix .uiHeaderTop").prepend("<div id=\"delete_buttons\" style=\"float:right;margin-left:5px;\"></label><label for=\"Ihavenofriends\" class=\"_11b uiButton uiToolbarButton\"><input type=\"submit\" id=\"mass_deleter\" value=\"Leave Selected Groups\"></label></div>");
+    $('.stickyHeaderWrap .back').css('height', '60px');
+    $('.fbTimelineSection.mtm').css('margin-top', '10px');
+    page = "groupslist"; 
+
+} else if ($("#pagelet_group_members").length > 0) {
+    $('.uiList .rfloat').prepend("<div id=\"delete_buttons\" style=\"float:right;margin-left:5px;\"></label><label for=\"Ihavenofriends\" class=\"_11b uiButton uiToolbarButton\"><input type=\"submit\" id=\"mass_deleter\" value=\"Expel Selected Members\"></label></div>");
+    $('.stickyHeaderWrap .back').css('height', '60px');
+    $('.fbTimelineSection.mtm').css('margin-top', '10px');
+    page = "groupsmem";
+}
+
+$("#mass_deleter").live("click", function() { //redo function when I get checkboxes everywhere else
     var i = 0;
     $('.marked:checkbox:checked').each(function() {
         i = i + 1;
         var profileid = $(this).attr('id');
         var a = document.createElement('script');
-        a.innerHTML = "new AsyncRequest().setURI('/ajax/profile/removefriend.php').setData({ uid: " + profileid + ",norefresh:true }).send();";
+        if (pages === "friends") {
+            a.innerHTML = "new AsyncRequest().setURI('/ajax/profile/removefriend.php').setData({ uid: " + profileid + ",norefresh:true }).send();";
+        } else if (pages === "likes") {
+            a.innerHTML = "new AsyncRequest().setURI('/ajax/pages/fan_status.php').setData({ fbpage_id: " + profileid + ",add:false,norefresh:true }).send();"; //figure out what parameters this script needs and how to get them
+        } else if (pages === "groupslist") {
+            a.innerHTML = "new AsyncRequest().setURI('/ajax/groups/membership/leave.php').setData({ group_id: " + profileid + ",norefresh:true }).send();"; 
+        } else if (pages === "groupsmem") {
+            a.innerHTML = "new AsyncRequest().setURI('/ajax/groups/members/remove.php').setData({ group_id: " + groupid + ",uid: " + profileid + ",norefresh:true }).send();"; //may not work. get both groupid and profileid
+        }
         document.body.appendChild(a);
     });
     if (i === 0) {
@@ -31,12 +65,6 @@ $("#mass_deleter").live("click", function() {
     }
     sleep(i);
 });
-$("#select_all").live("click", function() {
-    clearTimeout(t);
-
-    alert('disabled for now');
-});
-
 
 function set_timer() {
     set_checkboxes(0);
@@ -44,10 +72,6 @@ function set_timer() {
     set_timer()
     }, 1000);
 }
-$('.uiToolbarContent .rfloat').prepend("<div id=\"delete_buttons\" style=\"float:right;;margin-left:5px;\"><label class=\"_11b uiButton uiButtonConfirm\" for=\"Ihavenofriends\"><input type=\"submit\" value=\"Select all\" id=\"select_all\"></label><label for=\"Ihavenofriends\" class=\"_11b uiButton uiButtonConfirm\"><input type=\"submit\" id=\"mass_deleter\" value=\"Delete Selected Friends\"></label></div>");
-$('.stickyHeaderWrap .back').css('height', '60px');
-$('.fbTimelineSection.mtm').css('margin-top', '10px');
-
 function set_checkboxes(i) {
     var search = false; //figure out how to differentiate between pages page and this page. shouldn't be hard
     $('li.fbProfileBrowserListItem.uiListItem').each(function(index) {
