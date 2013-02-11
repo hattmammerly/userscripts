@@ -8,6 +8,7 @@ todo:
 -
 -   reorganize the code and see if I can make it less choppy
 -   put checkboxes on the "likes" page and the "groups" page
+    -   this... isn't going well. work in progress hah
 -   troubleshoot executing the removal scripts since those are guesses
 
 note: giving up on mass expulsion of group members. I had the button in place but then I broke it somehow and now it won't come back. I don't need it, anyway.
