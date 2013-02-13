@@ -50,7 +50,7 @@ $("#mass_deleter").live("click", function() {
         } else if (page === "likes") {
             a.innerHTML = "new AsyncRequest().setURI('/ajax/pages/fan_status.php').setData({ fbpage_id: " + profileid + ",add:false,norefresh:true }).send();"; //figure out what parameters this script needs and how to get them
         } else if (page === "groups") {
-            a.innerHTML = "new AsyncRequest().setURI('/ajax/bookmark/groups/leave/').setData({ group_id: " + profileid + ",norefresh:true }).send();";
+            a.innerHTML = "new AsyncRequest().setURI('/ajax/bookmark/groups/leave/').setData({ group_id: " + profileid + ", autocomplete:true }).send();";
             //a.innerHTML = "new AsyncRequest().setURI('/ajax/groups/membership/leave.php').setData({ group_id: " + profileid + ",norefresh:true }).send();"; 
         }
         document.body.appendChild(a);
@@ -146,4 +146,8 @@ function groups_checkboxes(i) {
             $(this).prepend('<input type="checkbox" class="marked lfloat" id="' + profileid + '">');
         }
     });
+}//*/
+/*
+function confirm_dialog() {
+    $(this).find('input[name="prevent_readd"]').attr('checked', 0); //don't prevent others from re-adding
 }//*/
