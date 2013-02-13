@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        I hate my friends
 // @description for those of us who hate our friends
-// @namespace http://hattmammerly.com/codez/
+// @namespace http://github.com/sirspazzolot/userscripts/
 // @include *.facebook.com/*
 // @require http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js
 // @version .2
@@ -37,13 +37,10 @@ if ($("#pagelet_friends").length > 0) {
     page = "groups";
 }
 
-alert(page);
-
 set_timer();
 
-$("#mass_deleter").live("click", function() { //redo function when I get checkboxes everywhere else
+$("#mass_deleter").live("click", function() {
     var i = 0;
-    alert('clicked');
     $('.marked:checkbox:checked').each(function() {
         i = i + 1;
         var profileid = $(this).attr('id');
@@ -51,10 +48,10 @@ $("#mass_deleter").live("click", function() { //redo function when I get checkbo
         if (page === "friends") {
             a.innerHTML = "new AsyncRequest().setURI('/ajax/profile/removefriend.php').setData({ uid: " + profileid + ",norefresh:true }).send();";
         } else if (page === "likes") {
-            alert('pages innerhtml');
             a.innerHTML = "new AsyncRequest().setURI('/ajax/pages/fan_status.php').setData({ fbpage_id: " + profileid + ",add:false,norefresh:true }).send();"; //figure out what parameters this script needs and how to get them
-        } else if (pages === "groups") {
-            a.innerHTML = "new AsyncRequest().setURI('/ajax/groups/membership/leave.php').setData({ group_id: " + profileid + ",norefresh:true }).send();"; 
+        } else if (page === "groups") {
+            a.innerHTML = "new AsyncRequest().setURI('/ajax/bookmark/groups/leave/').setData({ group_id: " + profileid + ",norefresh:true }).send();";
+            //a.innerHTML = "new AsyncRequest().setURI('/ajax/groups/membership/leave.php').setData({ group_id: " + profileid + ",norefresh:true }).send();"; 
         }
         document.body.appendChild(a);
     });
@@ -76,6 +73,8 @@ function set_checkboxes() {
         friends_checkboxes();
     } else if (page === "likes") {
          likes_checkboxes();
+    } else if (page === "groups") {
+        groups_checkboxes();
     }
 }
 
@@ -140,10 +139,11 @@ function groups_checkboxes(i) {
             id = $(this).find('li.uiMenuItem[data-label="Leave Group"]').children('a.itemAnchor').attr("href");
         }
         if (!id) {
-            alert('id is broken');
             id = 1;
         }
         var profileid = parseInt(/(\d+)/.exec(id)[1], 10);
-        //if (!$(this).     woooooooo just add checkboxes and then I think I"m done
+        if (!$(this).children().hasClass('marked')) {
+            $(this).prepend('<input type="checkbox" class="marked lfloat" id="' + profileid + '">');
+        }
     });
-}
+}//*/
