@@ -10,7 +10,7 @@
 
 function sleep(rem){ //rem for removed entries
     setInterval(function() {
-        popup(rem)
+        popup(rem);
     }, 1000);
 }
 
@@ -30,25 +30,28 @@ if ($("#pagelet_friends").length > 0) {
     $('.stickyHeaderWrap .back').css('height', '60px');
     $('.fbTimelineSection.mtm').css('margin-top', '10px');
     page = "likes";
-    alert(page);
-} else if ($(location).attr("href") === "https://www.facebook.com/bookmarks/groups" || $(location).attr("href") === "http://www.facebook.com/bookmarks/groups") {
+} else if ($(location).attr("href") == "https://www.facebook.com/bookmarks/groups" || $(location).attr("href") === "http://www.facebook.com/bookmarks/groups") {
     $(".clearfix .uiHeaderTop").prepend("<div id=\"delete_buttons\" style=\"float:right;margin-left:5px;\"></label><label for=\"Ihavenofriends\" class=\"uiHeaderActions uiButton\"><input type=\"submit\" id=\"mass_deleter\" value=\"Leave Selected Groups\"></label></div>");
     $('.stickyHeaderWrap .back').css('height', '60px');
     $('.fbTimelineSection.mtm').css('margin-top', '10px');
     page = "groups";
 }
 
+alert(page);
+
 set_timer();
 
 $("#mass_deleter").live("click", function() { //redo function when I get checkboxes everywhere else
     var i = 0;
+    alert('clicked');
     $('.marked:checkbox:checked').each(function() {
         i = i + 1;
         var profileid = $(this).attr('id');
         var a = document.createElement('script');
-        if (pages === "friends") {
+        if (page === "friends") {
             a.innerHTML = "new AsyncRequest().setURI('/ajax/profile/removefriend.php').setData({ uid: " + profileid + ",norefresh:true }).send();";
-        } else if (pages === "likes") {
+        } else if (page === "likes") {
+            alert('pages innerhtml');
             a.innerHTML = "new AsyncRequest().setURI('/ajax/pages/fan_status.php').setData({ fbpage_id: " + profileid + ",add:false,norefresh:true }).send();"; //figure out what parameters this script needs and how to get them
         } else if (pages === "groups") {
             a.innerHTML = "new AsyncRequest().setURI('/ajax/groups/membership/leave.php').setData({ group_id: " + profileid + ",norefresh:true }).send();"; 
@@ -62,72 +65,42 @@ $("#mass_deleter").live("click", function() { //redo function when I get checkbo
 });
 
 function set_timer() {
-    set_checkboxes(0);
+    set_checkboxes();
     t = setTimeout(function() {
     set_timer()
     }, 1000);
 }
-function set_checkboxes(i) {
-    var selector = ""; //figure out how to differentiate between pages page and this page. shouldn't be hard
-   if (page === "friends") {
-        var search = false;
-        $('li.fbProfileBrowserListItem.uiListItem').each(function(index) {
-        search = true;
-        });
-        if (search) {
-            $('div.fbProfileBrowserList ul li.fbProfileBrowserListItem.uiListItem').each(function(index) {
-                var id = $(this).find('div.fsl a').attr('data-hovercard'); //hovercard attribute is a url ending with friend's id
-                if (!id) {
-                    id = $(this).find('div.fsl a').attr('ajaxify'); //mutual friends dialog or whatever, also contains id
-                }
-                if (!id) {
-                    id = '1';
-                }
-                var profileid = parseInt(/(\d+)/.exec(id)[1], 10); //discard all but the base10 int in id
-                if (i == '0') {
-                    if (!$(this).find('input').hasClass('marked')) {
-                        $(this).find('input').prepend('<input type="checkbox" class="marked" id="' + profileid + '">');
-                    }
-                } else { //check every box
-                    if (!$(this).find('input').hasClass('marked')) {
-                        $(this).find('input').remove();
-                        $(this).find('div.fsl').prepend('<input type="checkbox" checked="checked" class="marked" id="' + profileid + '">');
-                     } else {
-                        $(this).find('input').prop('checked', true);
-                    }
-                }
-            }); //all of that was search page code so we get to do that again
-        } else {
-            $('div.fsl').each(function(index) {
-                if ($(this).hasClass('fwb')) {
-                    var id = $(this).find('a').attr('data-hovercard');
-                    if (!id) {
-                        id = $(this).find('a').attr('ajaxify');
-                    }
-                    if (!id) {
-                        id = '1';
-                    }
-                    var profileid = parseInt(/(\d+)/.exec(id)[1], 10);
-                    if (i == '0') {
-                        if (!$(this).children().hasClass('marked')) {
-                            $(this).prepend('<input type="checkbox" class="marked" id="' + profileid + '">');
-                        }
-                    } else { //check every box
-                        if (!$(this).children().hasClass('marked')) {
-                            $(this).find('input').remove();
-                            $(this).prepend('<input type="checkbox" checked="checked" class="marked" id="' + profileid + '">');
-                        } else {
-                            $(this).find('input').prop('checked', true);
-                        }
-                    }
-                }
-            });
-        }
-    } /*else if (page === "likes") {
-        alert("page === likes");
-        $('li.mbs.uiFavoritesStory').each(function(index) {
-            if ($(this).find(*).hasClass('.nameText') {
-                alert('hasClass .nametext');
+
+function set_checkboxes() {
+    if (page === "friends") {
+        friends_checkboxes();
+    } else if (page === "likes") {
+         likes_checkboxes();
+    }
+}
+
+function friends_checkboxes() {
+    var search = false;
+    $('li.fbProfileBrowserListItem.uiListItem').each(function(index) {
+    search = true;
+    });
+    if (search) {
+        $('div.fbProfileBrowserList ul li.fbProfileBrowserListItem.uiListItem').each(function(index) {
+            var id = $(this).find('div.fsl a').attr('data-hovercard'); //hovercard attribute is a url ending with friend's id
+            if (!id) {
+                id = $(this).find('div.fsl a').attr('ajaxify'); 
+            }
+            if (!id) {
+                id = '1';
+            }
+            var profileid = parseInt(/(\d+)/.exec(id)[1], 10); //extract bare id number from attribute
+            if (!$(this).find('input').hasClass('marked')) {
+                $(this).find('input').prepend('<input type="checkbox" class="marked" id="' + profileid + '">');
+             }
+        }); //all of that was search page code so we get to do that again for the main friends page
+    } else {
+        $('div.fsl').each(function(index) {
+            if ($(this).hasClass('fwb')) {
                 var id = $(this).find('a').attr('data-hovercard');
                 if (!id) {
                     id = $(this).find('a').attr('ajaxify');
@@ -136,19 +109,41 @@ function set_checkboxes(i) {
                     id = '1';
                 }
                 var profileid = parseInt(/(\d+)/.exec(id)[1], 10);
-                if (i == '0') {
-                    if (!$(this).children().hasClass('marked')) {
-                        $(this).prepend('<input type="checkbox" class="marked" id="' + profileid + '">');
-                    }
-                } else {
-                    if (!$(this).children().hasClass('marked')) {
-                        $(this).find('input').remove();
-                        $(this).prepend('<input type="checkbox" checked="checked" class="marked" id="' + profileid + '">');
-                    } else {
-                        $(this).find('input').prop('checked', true);
-                    }
+                if (!$(this).children().hasClass('marked')) {
+                    $(this).prepend('<input type="checkbox" class="marked" id="' + profileid + '">');
                 }
             }
+        });
+    }
+}
+
+function likes_checkboxes() {
+    $('li.mbs.uiFavoritesStory').each(function(index) {
+        var id = $(this).find('div.nameText').children('a').attr('data-hovercard');
+        if (!id) {
+            id = $(this).find('td.vTop.prm.fbStreamTimelineFavInfoContainer').attr('data-hovercard');
         }
-    }  //*///for some reason or another this block breaks the stuff up top. separate the checkbox function into three different functions for simplicity.
+        if (!id) {
+            id = '1';
+        }
+        var profileid = parseInt(/(\d+)/.exec(id)[1], 10);
+        if (!$(this).find('div.nameText').children().hasClass('marked')) {
+            $(this).find('div.nameText').prepend('<input type="checkbox" class="marked" id="' + profileid + '">');
+        }
+    });
+}//*/
+
+function groups_checkboxes(i) {
+    $('#pagelet_bookmark_seeall').find('li.seeAllItem.clearfix').each(function() {
+        var id = $(this).children('a[id^="privacy_icon_group"]').attr('data-hovercard');
+        if (!id) {
+            id = $(this).find('li.uiMenuItem[data-label="Leave Group"]').children('a.itemAnchor').attr("href");
+        }
+        if (!id) {
+            alert('id is broken');
+            id = 1;
+        }
+        var profileid = parseInt(/(\d+)/.exec(id)[1], 10);
+        //if (!$(this).     woooooooo just add checkboxes and then I think I"m done
+    });
 }
