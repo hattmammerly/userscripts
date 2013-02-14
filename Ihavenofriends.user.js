@@ -4,7 +4,7 @@
 // @namespace http://github.com/sirspazzolot/userscripts/
 // @include *.facebook.com/*
 // @require http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js
-// @version .2
+// @version 1.0
 // ==/UserScript==
 // based on http://userscripts.org/scripts/show/150411
 
@@ -30,16 +30,16 @@ if ($("#pagelet_friends").length > 0) {
     $('.stickyHeaderWrap .back').css('height', '60px');
     $('.fbTimelineSection.mtm').css('margin-top', '10px');
     page = "likes";
-} else if ($(location).attr("href") == "https://www.facebook.com/bookmarks/groups" || $(location).attr("href") === "http://www.facebook.com/bookmarks/groups") {
+}/* else if ($(location).attr("href") == "https://www.facebook.com/bookmarks/groups" || $(location).attr("href") === "http://www.facebook.com/bookmarks/groups") {
     $(".clearfix .uiHeaderTop").prepend("<div id=\"delete_buttons\" style=\"float:right;margin-left:5px;\"></label><label for=\"Ihavenofriends\" class=\"uiHeaderActions uiButton\"><input type=\"submit\" id=\"mass_deleter\" value=\"Leave Selected Groups\"></label></div>");
     $('.stickyHeaderWrap .back').css('height', '60px');
     $('.fbTimelineSection.mtm').css('margin-top', '10px');
     page = "groups";
-}
+}//*/
 
 set_timer();
 
-$("#mass_deleter").live("click", function() {
+$("#mass_deleter").live("click",function() { //well .live() is deprecated in 1.7 and removed in 1.9 but .click() seems to break groups (and only groups)
     var i = 0;
     $('.marked:checkbox:checked').each(function() {
         i = i + 1;
@@ -48,13 +48,18 @@ $("#mass_deleter").live("click", function() {
         if (page === "friends") {
             a.innerHTML = "new AsyncRequest().setURI('/ajax/profile/removefriend.php').setData({ uid: " + profileid + ",norefresh:true }).send();";
         } else if (page === "likes") {
-            a.innerHTML = "new AsyncRequest().setURI('/ajax/pages/fan_status.php').setData({ fbpage_id: " + profileid + ",add:false,norefresh:true }).send();"; //figure out what parameters this script needs and how to get them
-        } else if (page === "groups") {
-            a.innerHTML = "new AsyncRequest().setURI('/ajax/bookmark/groups/leave/').setData({ group_id: " + profileid + ", autocomplete:true }).send();";
+            a.innerHTML = "new AsyncRequest().setURI('/ajax/pages/fan_status.php').setData({ fbpage_id: " + profileid + ",add:false }).send();"; //figure out what parameters this script needs and how to get them
+        }/* else if (page === "groups") {
+            a.innerHTML = "new AsyncRequest().setURI('/ajax/bookmark/groups/leave/').setData({ group_id: " + profileid + ", norefresh:true, autocomplete:true }).send();";
             //a.innerHTML = "new AsyncRequest().setURI('/ajax/groups/membership/leave.php').setData({ group_id: " + profileid + ",norefresh:true }).send();"; 
-        }
+        }//*/
         document.body.appendChild(a);
     });
+
+    /*if (page === "groups") {
+        setTimeout(function(){confirm_dialog()}, 1000);
+    }//*/
+
     if (i === 0) {
         alert('Select at least one entry to remove.\nContact me if it\'s broken');
     }
@@ -131,7 +136,7 @@ function likes_checkboxes() {
         }
     });
 }//*/
-
+/*
 function groups_checkboxes(i) {
     $('#pagelet_bookmark_seeall').find('li.seeAllItem.clearfix').each(function() {
         var id = $(this).children('a[id^="privacy_icon_group"]').attr('data-hovercard');
@@ -143,11 +148,17 @@ function groups_checkboxes(i) {
         }
         var profileid = parseInt(/(\d+)/.exec(id)[1], 10);
         if (!$(this).children().hasClass('marked')) {
-            $(this).prepend('<input type="checkbox" class="marked lfloat" id="' + profileid + '">');
+            $(this).find('a.pvm.phs.itemLinkWithPrivacyIcon.hasTimestamp').css('width', '420px');
+            $(this).prepend('<input type="checkbox" class="marked" id="' + profileid + '">');
         }
     });
 }//*/
 /*
 function confirm_dialog() {
-    $(this).find('input[name="prevent_readd"]').attr('checked', 0); //don't prevent others from re-adding
+    $(document).find('div._10.confirm_dialog.uiLayer._3qw').each(function() {
+       $(this).find('input[name="prevent_readd"]').prop('checked', 0); //don't prevent others from re-adding
+       $(this).find('input[name="confirmed"]').live("click", function(e) {
+            e.preventDefault();
+       });
+    });
 }//*/

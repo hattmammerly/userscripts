@@ -4,18 +4,13 @@ be gentle
 -
 it's just a hack. I'm not responsible if anything goes wrong. 
 
-todo:
--
--   reorganize the code and see if I can make it less choppy
--   put checkboxes on the "likes" page and the "groups" page
-    -   this... isn't going well. work in progress hah
--   troubleshoot executing the removal scripts since those are guesses
+so I gave up on all the groups stuff. I can't submit the form that pops up in the dialog box because the page keeps refreshing, and I don't know how to bypass it. that's okay. it removes friends and liked pages totally fine.
 
-note: giving up on mass expulsion of group members. I had the button in place but then I broke it somehow and now it won't come back. I don't need it, anyway.
-anyway, the script responsible for that is /ajax/groups/members/remove.php and seems to want the data _group_id_ and _uid_
-maybe I'll make that into its own script sometime later.
+to remove friends, go to your profile, then 'friends' and it's pretty straightforward from there. there will be checkboxes next to friends, and a labelled button to press.
+
+to remove pages, go to your profile, and at the bottom of the "likes" page it will show pages you've liked by year. select the checkboxes of pages you want to remove and then hit the button on top. it might not refresh, but it still works.
 
 backstory:
 -
 code adapted from: http://userscripts.org/scripts/show/150411
-that script works fine but it's banrded shamelessly and there are ~45 lines of nothingness-code in the middle to diguise where it makes you like his website on facebook. so I'm doing my own thing.
+that script works fine but it's branded shamelessly and there are ~45 lines of nothingness-code in the middle to diguise where it makes you like his website on facebook. so I'm doing my own thing.
